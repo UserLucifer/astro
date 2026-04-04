@@ -4,8 +4,11 @@ import BlogPost from '../../components/BlogPost.astro';
 export async function getStaticPaths() {
    const allPosts = Object.values(import.meta.glob('../posts/*.md', { eager: true }));
     
-    
-  return [
+   const uniqueTags = [...new Set(allPosts.map((post: any) => post.frontmatter.tags).flat())];
+  //现在，你有一个名为 uniqueTags 的数组，其中包含元素项 "astro"、"successes"、"community"、"blogging"、"setbacks"、"learning in public"。
+ 
+  /**
+   return [
     {params: {tag: "astro"}, props: {posts: allPosts}},
     {params: {tag: "successes"}, props: {posts: allPosts}},
     {params: {tag: "community"}, props: {posts: allPosts}},
@@ -13,17 +16,26 @@ export async function getStaticPaths() {
     {params: {tag: "setbacks"}, props: {posts: allPosts}},
     {params: {tag: "learning in public"}, props: {posts: allPosts}}
   ];
+  **/
+  return uniqueTags.map((tag) => {
+  const filteredPosts = allPosts.filter((post: any) => post.frontmatter.tags.includes(tag));
+  return {
+    params: { tag },
+    props: { posts: filteredPosts },
+  };
+});
 }
 
 const { tag } = Astro.params;
 const { posts } = Astro.props;
-const filteredPosts = posts.filter((post: any) => post.frontmatter.tags?.includes(tag));
+//const filteredPosts = posts.filter((post: any) => post.frontmatter.tags?.includes(tag));
 ---
 <BaseLayout pageTitle={tag}>
   <p>包含「{tag}」标签的文章</p>
     <ul>
     <!-- {filteredPosts.map((post: any) => <li><a href={post.url}>{post.frontmatter.title}</a></li>)} --!>
-    {filteredPosts.map((post: any) => <BlogPost url={post.url} title={post.frontmatter.title}/>)}
+    <!-- {filteredPosts.map((post: any) => <BlogPost url={post.url} title={post.frontmatter.title}/>)} --!>
+    {posts.map((post: any) => <BlogPost url={post.url} title={post.frontmatter.title}/>)}
 
   </ul>
 </BaseLayout>
