@@ -4,6 +4,7 @@
 这是一个多行注释。
 可以包含多行文本。
 */
+import BlogPost from '../components/BlogPost.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 //通过对 import.meta.glob() 返回的数组进行映射，你的整个博客文章列表现在是通过 Astro 内置的 TypeScript 支持而动态生成的。
 const allPosts = Object.values(import.meta.glob('./posts/*.md', { eager: true }));
@@ -19,6 +20,8 @@ const pageTitle = "我的 Astro 学习博客";
     <li><a href="/posts/post-3/">文章 3</a></li>
 	这是文本注释
    -->
-    {allPosts.map((post: any) => <li><a href={post.url}>{post.frontmatter.title}</a></li>)}
+    <!-- {allPosts.map((post: any) => <li><a href={post.url}>{post.frontmatter.title}</a></li>)}-->
+	{allPosts.map((post: any) => <BlogPost url={post.url} title={post.frontmatter.title} />)}
+
   </ul>
 </BaseLayout>
